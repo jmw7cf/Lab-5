@@ -1,0 +1,221 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct student{
+        char* name;
+        double* homework;
+        double* quizzes;
+        double* tests;
+        double hwavg;
+        double quizavg;
+        double testavg;
+        double weightavg;
+}Student;
+typedef enum type{
+        HW,
+        QUIZ,
+        TEST,
+        WEIGHTED
+}Type;
+#define NAMELENGTH 20
+void get_averages(Student* class, int length, Type search);
+Student* find_highest(Student* class, int length, Type search);
+double average(double* array, int length);
+double weighted_average(double hw, double quiz, double test);
+
+int main(int argc, char* argv[])
+{
+        if( argc!= 6)
+        {
+                printf("Incorrect input\nCorrect input: ./a.out <numstudents> <input file.c>  <numhws> <numquizzes> <numtests>\n");
+        }
+
+else{
+        FILE *file;
+
+        if((file=fopen(argv[2], "r"))==NULL)
+        {
+                printf("Could not open file\n");
+        return 0;
+        }
+                  int numStud=25;
+                int hw=6;
+                int quiz=4;
+                int test=2;
+        Student* stud=malloc(sizeof(Student)*25);
+
+        int l,m;
+        for(l=0; l<numStud; l++)
+        {
+
+                stud[l].name=malloc(sizeof(char)*NAMELENGTH);
+                stud[l].homework=malloc(sizeof(double)*hw);
+                stud[l].quizzes=malloc(sizeof(double)*quiz);
+                stud[l].tests=malloc(sizeof(double)*test);
+
+                fscanf(file, "%s", stud[l].name);
+
+                fscanf(file, "%lf %lf %lf %lf %lf %lf", &stud[l].homework[0], &stud[l].homework[1], &stud[l].homework[2], &stud[l].homework[3], &stud[l].homework[4], &stud[l].homework[5]);
+
+                fscanf(file, "%lf %lf %lf %lf ", &stud[l].quizzes[0], &stud[l].quizzes[1], &stud[l].quizzes[2], &stud[l].quizzes[3]);
+
+                fscanf(file, "%lf %lf ", &stud[l].tests[0], &stud[l].tests[1]);
+
+        }
+
+                get_averages(stud, hw, HW);
+                get_averages(stud, quiz, QUIZ);
+                get_averages(stud, test, TEST);
+                get_averages(stud, 1, WEIGHTED);
+
+        int input=0;
+        Student* studreturn;
+        while(input != -1)
+        {
+                printf("Enter '1' if you want the highest homework average\nEnter '2' if you want the highest quiz average\nEnter '3' if you want the highest test average\nEnter '4' if you want the highest weighted average\nEnter '-1' if you wish to exit: ");
+                scanf("%d", &input);
+                if(input > 4 || input < (-1) || input == 0)
+                {
+                        printf("\nIncorrect input. Please enter a valid choice: ");
+                        scanf("%d", &input);
+                }
+
+                switch(input)
+                {
+                case 1:
+                        studreturn=find_highest(stud, hw, HW);
+                        printf("\n%s has the highest homework average at %.2lf%%\n\n", studreturn->name, (*studreturn).hwavg);
+                        break;
+                case 2:
+                        studreturn=find_highest(stud, quiz, QUIZ);
+                        printf("\n%s has the highest quiz average at %.2lf%%\n\n", studreturn->name, (*studreturn).quizavg);
+                        break;
+                case 3:
+                        studreturn=find_highest(stud, test, TEST);
+                        printf("\n%s has the highest test average at %.2lf%%\n\n", studreturn->name, (*studreturn).testavg);
+                        break;
+                case 4:
+                        studreturn=find_highest(stud, 1, WEIGHTED);
+                        printf("\n%s has the highest weighted average at %.2lf%%\n\n", studreturn->name, (*studreturn).weightavg);
+                        break;
+                }
+        }
+for(m=0; m<numStud; m++)
+{
+        free(stud[m].name);
+        free(stud[m].homework);
+        free(stud[m].tests);
+}
+}
+return 0;
+}
+
+
+double average(double* array, int length)
+{
+        int i;
+        double sum=0;
+        double l=0;
+        for(i=0; i<length; i++)
+        {
+                sum=sum+array[i];
+                l++;
+        }
+        double avg;
+        avg=sum/l;
+        //printf("%.2lf\n",avg);
+return avg;
+}
+
+Student* find_highest(Student* class, int length, Type search)
+{
+        int  max=0, j=0;
+        if(search==0)
+        {
+                for(j=0; j<25; j++)
+                {
+                                if(class[max].hwavg<class[j].hwavg)
+                                {
+                                        max=j;
+                                }
+                }
+        }
+
+        else if(search==1)
+        {
+                for(j=0; j<25; j++)
+                {
+                                 if(class[max].quizavg<class[j].quizavg)
+                                {
+                                         max=j;
+                                 }
+                }
+        }
+
+        else if(search==2)
+        {
+                for(j=0; j<25; j++)
+                {
+                                 if(class[max].testavg<class[j].testavg)
+                                 {
+                                        max=j;
+                                 }
+                }
+        }
+
+        else if(search==3)
+        {
+                for(j=0; j<25; j++)
+                {
+                                 if(class[max].weightavg<class[j].weightavg)
+                                 {
+                                        max=j;
+                                 }
+                }
+        }
+
+
+return &class[max];
+}
+
+
+void get_averages(Student* class, int length, Type search)
+{
+int i;
+        if(search==0)
+        {
+                for(i=0; i<25; i++)
+                {
+                 class[i].hwavg=average(class[i].homework, length);
+                printf("%.2lf\n", class[i].hwavg);
+                }
+        }
+        if(search==1)
+        {
+                for(i=0; i<25; i++)
+                {
+                class[i].quizavg=average(class[i].quizzes, length);
+                }
+         }
+        if(search==2)
+        {
+                for(i=0; i<25; i++)
+                {
+                class[i].testavg=average(class[i].tests, length);
+                }
+        }
+        if(search==3)
+        {
+                for(i=0; i<25; i++)
+                {
+                class[i].weightavg=weighted_average(class[i].hwavg, class[i].quizavg, class[i].testavg);
+                }
+         }
+}
+
+double weighted_average(double hw, double quiz, double test)
+{
+        double sum;
+        sum=hw*(.1)+quiz*(.3)+test*(.6);
+return sum;
+}
+                         
